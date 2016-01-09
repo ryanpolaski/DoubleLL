@@ -1,0 +1,139 @@
+
+********** Testing: DoubleLinkedList default ctor  **********
+
+********** Testing: DoubleLinkedList copy ctor with empty list **********
+
+********** Testing: DoubleLinkedList op = **********
+
+********** Testing: DoubleLinkedList getters  **********
+00000000
+00000000
+
+********** Testing: DoubleLinkedList Append **********
+5
+35
+
+********** Testing: DoubleLinkedList First and Last **********
+
+********** Testing: First and Last with Full List **********
+5
+35
+
+********** Testing: First with Empty List **********
+Error: No first element in list
+
+********** Testing: Last with Empty List **********
+Error: No last element in list
+
+********** Testing: DoubleLinkedList Prepend **********
+
+********** Testing: Prepend with Full List **********
+0
+35
+
+********** Testing: Prepend with Empty List **********
+500
+100
+
+********** Testing: DoubleLinkedList Copy ctor with Full List **********
+
+********** Testing: DoubleLinkedList Purge with Full List **********
+
+********** Testing: Before Purge Full List **********
+0105E0D0
+0105F5E0
+
+********** Testing: After Purge Full List **********
+00000000
+00000000
+
+********** Testing: DoubleLinkedList Purge with Empty List **********
+
+********** Testing: Before Purge Empty List **********
+00000000
+00000000
+
+********** Testing: After Purge Empty List **********
+00000000
+00000000
+
+********** Testing: DoubleLinkedList InsertBefore **********
+
+********** Testing: InsertBefore with Empty List **********
+Data not found within list
+
+********** Testing: InsertBefore head with only one node **********
+-1
+0
+
+********** Testing: InsertBefore head with multiple nodes **********
+-3
+0
+
+********** Testing: InsertBefore a node in the middle of the list **********
+-3
+0
+
+********** Testing: InsertBefore but existing_data doesn't exist **********
+Data not found within list
+
+********** Testing: DoubleLinkedList InsertAfter **********
+
+********** Testing: InsertAfter with Empty List **********
+Data not found within list
+
+********** Testing: InsertAfter tail with only one node **********
+0
+1
+
+********** Testing: InsertAfter tail with multiple nodes **********
+0
+3
+
+********** Testing: InsertAfter a node in the middle of the list **********
+0
+3
+
+********** Testing: InsertAfter but existing_data doesn't exist **********
+Data not found within list
+
+********** testing: doublelinkedlist extract **********
+
+********** testing: extract with empty list**********
+Data not found in list
+
+********** testing: extract removing only node **********
+Error: No first element in list
+Error: No last element in list
+
+********** testing: extract removing head **********
+1
+1
+
+********** testing: extract removing tail **********
+0
+0
+
+********** testing: extract removing non-existing node **********
+Data not found in list
+
+********** Testing: List Integrity **********
+0
+1
+2
+3
+4
+5
+15
+25
+35
+35
+25
+15
+5
+4
+3
+2
+1
+0
+Press any key to continue . . .
