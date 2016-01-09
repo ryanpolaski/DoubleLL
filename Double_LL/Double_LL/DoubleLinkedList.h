@@ -1,4 +1,9 @@
 /************************************************************************
+* Author:	 Ryan Polaski
+* Filename : DoubleLinkedList.h
+* Date Created : 1/6/16
+* Modifications : 1/8/16 – Documented program
+*
 * Class: DoubleLinkedList
 *
 * Purpose: This class creates a double linked list with a head and tail.
@@ -8,16 +13,26 @@
 * Manager functions:
 * 	DoubleLinkedList () : m_head(nullptr), m_tail(nullptr)
 * 		The default for head and tail is nullptr.
-*	Array (int length, int start_index = 0)
-*		Creates an appropriate sized array with the starting index
-*              either zero or the supplied starting value.
-*	Array (const Array & copy)
-*	operator = (const Array & copy)
-*	~Array()
-*
+*	~DoubleLinkedList();
+*	DoubleLinkedList<T>& operator=(const DoubleLinkedList<T> & rhs);
+*	DoubleLinkedList<T>(const DoubleLinkedList<T> & copy);
+*	
 * Methods:
-*	operator [ ] (int index)
-*		...
+*	bool isEmpty();
+*	T & First() const;
+*	T & Last() const;
+*	void Prepend(T);
+*	void Append(T);
+*	void Purge();
+*	T Extract(T);
+*	void InsertAfter(const T & put, const T & find);
+*	void InsertBefore(const T & put, const T & find);
+*	void PrintForwards();
+*	void PrintBackwards();
+* Getters
+*	Node<T>* getHead();
+*	Node<T>* getTail();
+*		
 *************************************************************************/
 #ifndef DOUBLELINKEDLIST_H
 #define DOUBLELINKEDLIST_H
@@ -36,8 +51,8 @@ public:
 	bool isEmpty();
 	T & First() const;
 	T & Last() const;
-	void Prepend(T);
-	void Append(T);
+	void Prepend(const T &);
+	void Append(const T &);
 	void Purge();
 	T Extract(T);
 	void InsertAfter(const T & put, const T & find);
@@ -54,19 +69,15 @@ private:
 	// Data Members
 	Node<T> * m_head;
 	Node<T> * m_tail;
-
 };
 
 /**********************************************************************
-* Purpose: This function reads the input data for each plant.
+* Purpose: This function initializes the head and tail to nullptr
 *
 * Precondition:
-*     LastPlantNumber - Declared size of the array plantArray.
-*                       Must be a non-negative value.
 *
 * Postcondition:
-*      Returns the number of plants read.
-*      Modifies the plantArray.
+*      Sets head and taill to nullptr
 *
 ************************************************************************/
 template <typename T>
@@ -75,12 +86,32 @@ DoubleLinkedList<T>::DoubleLinkedList() : m_head(nullptr), m_tail(nullptr)
 
 }
 
+/**********************************************************************
+* Purpose: This function calls the purge function to delete anything
+*		   created
+*
+* Precondition:
+*
+* Postcondition:
+*      Calls the purge function
+*
+************************************************************************/
 template <typename T>
 DoubleLinkedList<T>::~DoubleLinkedList()
 {
 	Purge();
 }
 
+/**********************************************************************
+* Purpose: This function initializes the head and tail to nullptr
+*
+* Precondition:
+*		Want to copy one objects data into another
+*
+* Postcondition:
+*		Copys data was copied into the empty object
+*
+************************************************************************/
 template <typename T>
 DoubleLinkedList<T>::DoubleLinkedList<T>(const DoubleLinkedList<T> & copy)
 {
@@ -89,23 +120,43 @@ DoubleLinkedList<T>::DoubleLinkedList<T>(const DoubleLinkedList<T> & copy)
 	Node<T> * travel = copy.m_head;
 	while (travel != nullptr)
 	{
-		Append(travel->Data);
-		travel = travel->Next;
+		Append(travel->m_data);
+		travel = travel->m_next;
 	}
 }
 
+/**********************************************************************
+* Purpose: This function sets one objects equal to another
+*
+* Precondition:
+*		Want to set one object equal to another
+*
+* Postcondition:
+*		One object was set equal to another
+*
+************************************************************************/
 template <typename T>
 DoubleLinkedList<T> & DoubleLinkedList<T>::operator=(const DoubleLinkedList<T> & rhs)
 {
 	Node<T> * travel = rhs.m_head;
 	while (travel != nullptr)
 	{
-		Append(travel->Data);
-		travel = travel->Next;
+		Append(travel->m_data);
+		travel = travel->m_next;
 	}
 	return *this;
 }
 
+/**********************************************************************
+* Purpose: This function checks to see if the list is empty
+*
+* Precondition:
+*		Want to see if the list has any data inside it
+*
+* Postcondition:
+*      Returns a bool depending on if the list is empty of not
+*
+************************************************************************/
 template <typename T>
 bool DoubleLinkedList<T>::isEmpty()
 {
@@ -117,12 +168,22 @@ bool DoubleLinkedList<T>::isEmpty()
 	return check;
 }
 
+/**********************************************************************
+* Purpose: This function returns the first element in the list
+*
+* Precondition:
+*		Want to see the first element in the list
+*
+* Postcondition:
+*      Returns the first element in the list
+*
+************************************************************************/
 template <typename T>
 T & DoubleLinkedList<T>::First() const
 {
 	if (m_head != nullptr)
 	{
-		return m_head->Data;
+		return m_head->m_data;
 	}
 	else
 		throw "Error: No first element in list";
@@ -133,7 +194,7 @@ T & DoubleLinkedList<T>::Last() const
 {
 	if (m_tail != nullptr)
 	{
-		return m_tail->Data;
+		return m_tail->m_data;
 	}
 	else
 		throw "Error: No last element in list";
@@ -141,16 +202,16 @@ T & DoubleLinkedList<T>::Last() const
 
 
 template <typename T>
-void DoubleLinkedList<T>::Prepend(T Data)
+void DoubleLinkedList<T>::Prepend(const T & data)
 {
 	Node<T> * prev_head = m_head;
-	m_head = new Node<T>(Data);
+	m_head = new Node<T>(data);
 	if (prev_head != nullptr)
 	{
-		prev_head->Previous = m_head;
+		prev_head->m_previous = m_head;
 	}
-	m_head->Next = prev_head;
-	m_head->Previous = nullptr;
+	m_head->m_next = prev_head;
+	m_head->m_previous = nullptr;
 	if (m_tail == nullptr)
 	{
 		m_tail = m_head;
@@ -158,19 +219,19 @@ void DoubleLinkedList<T>::Prepend(T Data)
 }
 
 template <typename T>
-void DoubleLinkedList<T>::Append(T Data)
+void DoubleLinkedList<T>::Append(const T & Data)
 {
 	Node<T> * old_tail = m_tail;
 	m_tail = new Node<T>(Data);
 
 	if (m_tail != nullptr)
 	{
-		m_tail->Previous = old_tail;
-		m_tail->Next = nullptr;
+		m_tail->m_previous = old_tail;
+		m_tail->m_next = nullptr;
 	}
 	if (old_tail != nullptr)
 	{
-		old_tail->Next = m_tail;
+		old_tail->m_next = m_tail;
 	}
 	if (m_head == nullptr)
 	{
@@ -184,7 +245,7 @@ void DoubleLinkedList<T>::Purge()
 	while (m_head != nullptr)
 	{
 		Node<T> * data = m_head;
-		m_head = m_head->Next;
+		m_head = m_head->m_next;
 		delete data;
 	}
 	m_tail = nullptr;
@@ -194,20 +255,20 @@ template <typename T>
 T DoubleLinkedList<T>::Extract(T data_extract)
 {
 	Node<T> * travel = m_head;
-	while (travel != nullptr && travel->Data != data_extract)
+	while (travel != nullptr && travel->m_data != data_extract)
 	{
-		travel = travel->Next;
+		travel = travel->m_next;
 	}
 	if (travel)
 	{
 		if (travel == m_head)
-			m_head = travel->Next;
+			m_head = travel->m_next;
 		if (travel == m_tail)
-			m_tail = travel->Previous;
-		else if (travel->Previous != nullptr)
+			m_tail = travel->m_previous;
+		else if (travel->m_previous != nullptr)
 		{
-			travel->Previous->Next = travel->Next;
-			travel->Next->Previous = travel->Previous;
+			travel->m_previous->m_next = travel->m_next;
+			travel->m_next->m_previous = travel->m_previous;
 		}
 		delete travel;
 	}
@@ -220,9 +281,9 @@ template <typename T>
 void DoubleLinkedList<T>::InsertAfter(const T & put, const T & find)
 {
 	Node<T> * travel = m_head;
-	while (travel != nullptr && travel->Data != find)
+	while (travel != nullptr && travel->m_data != find)
 	{
-		travel = travel->Next;
+		travel = travel->m_next;
 	}
 	if (travel)
 	{
@@ -233,18 +294,18 @@ void DoubleLinkedList<T>::InsertAfter(const T & put, const T & find)
 		else if (travel == m_head)
 		{
 			Node<T> * newnode = new Node<T>(put);
-			newnode->Previous = m_head;
-			newnode->Next = m_head->Next;
-			m_head->Next->Previous = newnode;
-			m_head->Next = newnode;
+			newnode->m_previous = m_head;
+			newnode->m_next = m_head->m_next;
+			m_head->m_next->m_previous = newnode;
+			m_head->m_next = newnode;
 		}
 		else
 		{
 			Node<T> * newnode = new Node<T>(put);
-			newnode->Next = travel->Next;
-			newnode->Previous = travel;
-			travel->Next->Previous = newnode;
-			travel->Next = newnode;
+			newnode->m_next = travel->m_next;
+			newnode->m_previous = travel;
+			travel->m_next->m_previous = newnode;
+			travel->m_next = newnode;
 		}
 	}
 	else
@@ -255,9 +316,9 @@ template <typename T>
 void DoubleLinkedList<T>::InsertBefore(const T & put, const T & find)
 {
 	Node<T> * travel = m_head;
-	while (travel != nullptr && travel->Data != find)
+	while (travel != nullptr && travel->m_data != find)
 	{
-		travel = travel->Next;
+		travel = travel->m_next;
 	}
 	if (travel)
 	{
@@ -268,18 +329,18 @@ void DoubleLinkedList<T>::InsertBefore(const T & put, const T & find)
 		else if (travel == m_tail)
 		{
 			Node<T> * newnode = new Node<T>(put);
-			newnode->Next = m_tail;
-			newnode->Previous = m_tail->Previous;
-			m_tail->Previous->Next = newnode;
-			m_tail->Previous = newnode;
+			newnode->m_next = m_tail;
+			newnode->m_previous = m_tail->m_previous;
+			m_tail->m_previous->m_next = newnode;
+			m_tail->m_previous = newnode;
 		}
 		else
 		{
 			Node<T> * newnode = new Node<T>(put);
-			newnode->Previous = travel->Previous;
-			newnode->Next = travel;
-			travel->Previous->Next = newnode;
-			travel->Previous = newnode;
+			newnode->m_previous = travel->m_previous;
+			newnode->m_next = travel;
+			travel->m_previous->m_next = newnode;
+			travel->m_previous = newnode;
 		}
 	}
 	else
@@ -298,8 +359,8 @@ void DoubleLinkedList<T>::PrintForwards()
 
 	while (m_head != nullptr)
 	{
-		cout << m_head->Data << endl;
-		m_head = m_head->Next;
+		cout << m_head->m_data << endl;
+		m_head = m_head->m_next;
 	}
 	m_head = prev_head;
 }
@@ -310,8 +371,8 @@ void DoubleLinkedList<T>::PrintBackwards()
 	Node<T> * prev_tail = m_tail;
 	while (m_tail != nullptr)
 	{
-		cout << m_tail->Data << endl;
-		m_tail = m_tail->Previous;
+		cout << m_tail->m_data << endl;
+		m_tail = m_tail->m_previous;
 	}
 	m_tail = prev_tail;
 }
@@ -327,6 +388,4 @@ Node<T>* DoubleLinkedList<T>::getTail()
 {
 	return m_tail;
 }
-
-
 #endif
